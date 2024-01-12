@@ -4,6 +4,8 @@ import styles from "./about.module.css";
 import aboutImage from "../../../public/about.png";
 
 const AboutPage = () => {
+    console.log("Let's check where it works");
+
     return (
         <div className={styles.container}>
             <div className={styles.textContainer}>

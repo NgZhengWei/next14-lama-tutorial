@@ -2,21 +2,35 @@ import React from "react";
 import styles from "./blog.module.css";
 import PostCard from "@/components/postCard/postCard";
 
-const BlogPage = () => {
+const fetchData = async () => {
+    // by default we cache the api response for faster loading
+    // no-store doesn't cache and is better for data that is constantly updated
+    // for blogs caching is okay
+    // can also revalidate data every x seconds
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+        // cache: "no-store",
+        next: { revalidate: 3600 },
+    });
+    if (!res.ok) {
+        throw new Error("Data fetching went wrong in blog");
+    }
+
+    return res.json();
+};
+
+const BlogPage = async ({ params, searchParams }) => {
+    // console.log(params); // path that comes after /blog
+    // console.log(searchParams); // queries
+
+    const posts = await fetchData();
+
     return (
         <div className={styles.container}>
-            <div className={styles.post}>
-                <PostCard />
-            </div>
-            <div className={styles.post}>
-                <PostCard />
-            </div>
-            <div className={styles.post}>
-                <PostCard />
-            </div>
-            <div className={styles.post}>
-                <PostCard />
-            </div>
+            {posts.map((post) => (
+                <div className={styles.post} key={post.id}>
+                    <PostCard post={post} />
+                </div>
+            ))}
         </div>
     );
 };
