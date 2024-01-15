@@ -3,6 +3,11 @@ import React from "react";
 import styles from "./about.module.css";
 import aboutImage from "../../../public/about.png";
 
+export const metadata = {
+    title: "About page",
+    description: "Next.js starter app about description",
+};
+
 const AboutPage = () => {
     console.log("Let's check where it works");
 

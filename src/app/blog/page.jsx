@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./blog.module.css";
 import PostCard from "@/components/postCard/postCard";
+import { getPosts } from "@/lib/data";
 
 const fetchData = async () => {
     // by default we cache the api response for faster loading
@@ -22,7 +23,8 @@ const BlogPage = async ({ params, searchParams }) => {
     // console.log(params); // path that comes after /blog
     // console.log(searchParams); // queries
 
-    const posts = await fetchData();
+    // const posts = await fetchData();
+    const posts = await getPosts();
 
     return (
         <div className={styles.container}>

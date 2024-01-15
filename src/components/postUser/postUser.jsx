@@ -1,5 +1,7 @@
 import React from "react";
 import styles from "./postUser.module.css";
+import { getUser } from "@/lib/data";
+import Image from "next/image";
 
 const fetchUser = async (id) => {
     const res = await fetch(
@@ -14,12 +16,22 @@ const fetchUser = async (id) => {
 };
 
 const PostUser = async ({ userId }) => {
-    const user = await fetchUser(userId);
+    // const user = await fetchUser(userId);
+    const user = await getUser(userId);
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.title}>Author</h2>
-            <p className={styles.username}>{user.username}</p>
+            <Image
+                src={user.img ? user.img : "/noavatar.png"}
+                alt=""
+                width={50}
+                height={50}
+                className={styles.avatar}
+            />
+            <div className={styles.texts}>
+                <h2 className={styles.title}>Author</h2>
+                <p className={styles.username}>{user.username}</p>
+            </div>
         </div>
     );
 };

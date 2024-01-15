@@ -1,13 +1,18 @@
-"use client";
+// "use client";
 
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import styles from "./contact.module.css";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
-const HydrationTestNoSSR = dynamic(() => import("@/components/hydrationTest"), {
-    ssr: false,
-});
+// const HydrationTestNoSSR = dynamic(() => import("@/components/hydrationTest"), {
+//     ssr: false,
+// });
+
+export const metadata = {
+    title: "Contact page",
+    description: "Next.js starter app contact description",
+};
 
 const ContactPage = () => {
     // state to prevent hydration error(server and client data differing) by rendering on client side
