@@ -4,10 +4,11 @@ import Image from "next/image";
 import PostUser from "@/components/postUser/postUser";
 import { getPost } from "@/lib/data";
 
-const fetchOnePost = async (id) => {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+// fetch data using API
+const fetchOnePost = async (slug) => {
+    const res = await fetch(`http://localhost:3000/api/blog/${slug}`);
     if (!res.ok) {
-        throw new Error(`Error fetching single post ${id}`);
+        throw new Error(`Error fetching single post ${slug}`);
     }
 
     return res.json();
@@ -25,9 +26,12 @@ export const generateMetadata = async ({ params }) => {
 };
 
 const SinglePostPage = async ({ params }) => {
-    const postId = params.slug;
+    // const postId = params.slug;
     // const post = await fetchOnePost(postId);
-    const post = await getPost(postId);
+    // const post = await getPost(postId);
+
+    const { slug } = params;
+    const post = await fetchOnePost(slug);
 
     return (
         <div className={styles.container}>
@@ -53,7 +57,7 @@ const SinglePostPage = async ({ params }) => {
                     <div className={styles.detailText}>
                         <h2 className={styles.detailTitle}>Published</h2>
                         <p className={styles.detailValue}>
-                            {post.createdAt.toDateString()}
+                            {new Date(post.createdAt).toDateString()}
                         </p>
                     </div>
                 </div>
