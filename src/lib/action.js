@@ -10,7 +10,7 @@ import { signIn, signOut } from "./auth";
 import bcrypt from "bcryptjs";
 
 // server actions have to be async
-export const addPost = async (formData) => {
+export const addPost = async (prevState, formData) => {
     // server action directive for this function only
     "use server";
 
@@ -32,6 +32,7 @@ export const addPost = async (formData) => {
         console.log(`Post '${title} saved in mongodb'`);
         // updates cache for blog so that the new post will be shown
         revalidatePath("/blog");
+        revalidatePath("/admin");
     } catch (error) {
         console.log(error);
         return { error: "Post creation went wrong" };
@@ -39,6 +40,7 @@ export const addPost = async (formData) => {
 };
 
 export const deletePost = async (formData) => {
+    "use server";
     // post id
     const { id } = Object.fromEntries(formData);
 
@@ -48,9 +50,51 @@ export const deletePost = async (formData) => {
         console.log(`Post '${id} deleted in mongodb'`);
         // updates cache for blog so that the new post will be shown
         revalidatePath("/blog");
+        revalidatePath("/admin");
     } catch (error) {
         console.log(error);
         return { error: "Post deletion went wrong" };
+    }
+};
+
+export const addUser = async (prevState, formData) => {
+    const { username, email, password, img, isAdmin } =
+        Object.fromEntries(formData);
+
+    try {
+        connectToDb();
+        const newUser = new User({
+            username,
+            email,
+            password,
+            img,
+            isAdmin,
+        });
+        await newUser.save();
+        console.log(`User '${username} saved in mongodb'`);
+        // updates cache for blog so that the new post will be shown
+        revalidatePath("/admin");
+    } catch (error) {
+        console.log(error);
+        return { error: "User creation went wrong" };
+    }
+};
+
+export const deleteUser = async (formData) => {
+    // user id
+    const { id } = Object.fromEntries(formData);
+
+    try {
+        connectToDb();
+
+        await Post.deleteMany({ userId: id });
+        await User.findByIdAndDelete(id);
+        console.log(`User '${id} deleted in mongodb'`);
+        // updates cache for admin so that the new user list will be shown
+        revalidatePath("/admin");
+    } catch (error) {
+        console.log(error);
+        return { error: "User deletion went wrong" };
     }
 };
 
