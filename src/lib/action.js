@@ -62,13 +62,23 @@ export const handleLogout = async () => {
     await signOut();
 };
 
-export const register = async (formData) => {
+export const register = async (prevState, formData) => {
     const { username, email, img, password, passwordRepeat } =
         Object.fromEntries(formData);
 
+    if (username === "") {
+        return { error: "Username cannot be empty" };
+    } else if (email === "") {
+        return { error: "Email cannot be empty" };
+    } else if (password === "") {
+        return { error: "Password cannot be empty" };
+    } else if (passwordRepeat === "") {
+        return { error: "Repeat password cannot be empty" };
+    }
+
     if (password !== passwordRepeat) {
-        throw new Error("passwords no match");
-        // return "Passwords do not match";
+        // throw new Error("passwords no match");
+        return { error: "Passwords do not match" };
     }
 
     try {
@@ -76,7 +86,7 @@ export const register = async (formData) => {
 
         const user = await User.findOne({ username });
         if (user) {
-            return "User already exist";
+            return { error: "User already exist" };
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -89,19 +99,23 @@ export const register = async (formData) => {
             img,
         });
         await newUser.save();
+        console.log("New user saved to mongodb");
+        return { success: true };
     } catch (error) {
         console.log(error);
         return { error: "User registration failed!" };
     }
 };
 
-export const login = async (formData) => {
+export const login = async (prevState, formData) => {
     const { username, password } = Object.fromEntries(formData);
 
     try {
         await signIn("credentials", { username, password });
     } catch (error) {
-        console.log(error);
-        return { error: "User login failed!" };
+        if (error.message.includes("credentialssignin")) {
+            return { error: "Invalid username or password" };
+        }
+        throw error;
     }
 };
